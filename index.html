@@ -3,125 +3,180 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>پنل مدیریت وی‌اسکیپ</title>
+    <title>مدیریت پرسنل وی‌اسکیپ</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
     <style>
-        body { font-family: 'Vazirmatn', sans-serif; }
-        .loader { border: 4px solid #f3f3f3; border-top: 4px solid #f59e0b; border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; display: none; }
+        body { font-family: 'Vazirmatn', sans-serif; background-color: #f8fafc; }
+        .loader { border: 3px solid #f3f3f3; border-top: 3px solid #f59e0b; border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; display: none; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .tab-btn.active { border-bottom: 2px solid #f59e0b; color: #f59e0b; }
     </style>
 </head>
-<body class="bg-slate-100 text-slate-800 p-4 md:p-8">
+<body class="text-slate-800 p-2 md:p-6">
 
-    <div class="max-w-3xl mx-auto space-y-6">
-        <!-- هدر -->
-        <div class="bg-slate-900 text-white p-6 rounded-2xl shadow-lg text-center">
-            <h1 class="text-2xl font-bold">مدیریت پرسنل وی‌اسکیپ</h1>
+    <div class="max-w-4xl mx-auto space-y-6">
+        
+        <div class="bg-slate-900 text-white p-5 rounded-2xl shadow-lg flex justify-between items-center">
+            <div>
+                <h1 class="text-xl md:text-2xl font-bold">اتوماسیون وی‌اسکیپ</h1>
+                <p class="text-xs text-slate-400 mt-1">نسخه ۸ سانس و گزارش‌گیری پیشرفته</p>
+            </div>
+            <div class="flex gap-2">
+                <button onclick="switchTab('entry')" id="btn-entry" class="tab-btn active px-3 py-2 font-bold transition">ثبت کارکرد</button>
+                <button onclick="switchTab('report')" id="btn-report" class="tab-btn px-3 py-2 font-bold transition">گزارش‌گیری</button>
+            </div>
         </div>
 
         <script>
-            // لینک وب‌اپلیکیشن گوگل اسکریپت شما
-            const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby9ohiXTURucDhcGuIyVySWdzR9jXxn_I7CbDEuQt0EjvRxGUUj02qBk5sK1xGTCCt0/exec';
+            // *************** لینک جدید متصل شد *****************
+            const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwt9HLrkhTupr9NgpD0vuCXA3U7u8v0cPOeAoQ9J8FxX7dxzhaAoXNLUkTP7bxHX2NR/exec';
+            // ****************************************************
         </script>
 
-        <!-- فرم ثبت اطلاعات -->
-        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-sm font-bold mb-1">انتخاب ماه</label>
-                    <select id="month" onchange="loadEmployees()" class="w-full border p-2 rounded-lg bg-slate-50">
-                        <option value="فروردین">فروردین</option><option value="اردیبهشت">اردیبهشت</option><option value="خرداد">خرداد</option>
-                        <option value="تیر">تیر</option><option value="مرداد">مرداد</option><option value="شهریور" selected>شهریور</option>
-                        <option value="مهر">مهر</option><option value="آبان">آبان</option><option value="آذر">آذر</option>
-                        <option value="دی">دی</option><option value="بهمن">بهمن</option><option value="اسفند">اسفند</option>
-                    </select>
+        <!-- فیلتر مشترک -->
+        <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 grid grid-cols-2 md:grid-cols-3 gap-4 items-end">
+            <div>
+                <label class="block text-sm font-bold mb-1 text-slate-600">انتخاب ماه</label>
+                <select id="month" onchange="loadEmployees()" class="w-full border border-slate-300 p-2 rounded-lg bg-slate-50 focus:ring-2 focus:ring-amber-500 outline-none transition">
+                    <option value="فروردین">فروردین</option><option value="اردیبهشت">اردیبهشت</option><option value="خرداد">خرداد</option>
+                    <option value="تیر">تیر</option><option value="مرداد">مرداد</option><option value="شهریور" selected>شهریور</option>
+                    <option value="مهر">مهر</option><option value="آبان">آبان</option><option value="آذر">آذر</option>
+                    <option value="دی">دی</option><option value="بهمن">بهمن</option><option value="اسفند">اسفند</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-sm font-bold mb-1 text-slate-600">انتخاب کارمند</label>
+                <select id="employee" class="w-full border border-slate-300 p-2 rounded-lg bg-slate-50 focus:ring-2 focus:ring-amber-500 outline-none transition">
+                    <option>در حال بارگذاری...</option>
+                </select>
+            </div>
+            <div class="hidden md:flex justify-end items-center h-full">
+                <div id="loaderMain" class="loader w-6 h-6"></div>
+            </div>
+        </div>
+
+        <!-- تب ثبت اطلاعات -->
+        <div id="tab-entry" class="space-y-4 block">
+            <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+                <h3 class="font-bold text-lg mb-4 pb-2 border-b border-slate-100 flex items-center gap-2">
+                    <span class="bg-amber-100 text-amber-600 px-2 py-1 rounded text-sm">۱</span> ثبت وضعیت سانس‌ها (پیش‌فرض: عدم وجود سانس)
+                </h3>
+                <div class="mb-4">
+                    <label class="block text-sm font-bold mb-1 text-slate-700">تاریخ روز (۱ تا ۳۱)</label>
+                    <input type="number" id="day" placeholder="مثلاً ۵" class="w-full md:w-1/3 border p-2 rounded-lg bg-slate-50">
                 </div>
-                <div>
-                    <label class="block text-sm font-bold mb-1">انتخاب کارمند</label>
-                    <select id="employee" class="w-full border p-2 rounded-lg bg-slate-50">
-                        <option>در حال بارگذاری...</option>
-                    </select>
+                
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3" id="session-grid">
+                    <!-- با جاوا اسکریپت پر می‌شود -->
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 border-t pt-4">
-                <div>
-                    <label class="block text-sm font-bold mb-1">روز (عدد ۱ تا ۳۱)</label>
-                    <input type="number" id="day" placeholder="مثلاً ۵" class="w-full border p-2 rounded-lg">
-                </div>
-                <div>
-                    <label class="block text-sm font-bold mb-1">سانس 23:00</label>
-                    <select id="v23" class="w-full border p-2 rounded-lg bg-slate-50">
-                        <option value="">تغییر نده</option><option value="حضور">حضور</option><option value="عدم حضور">عدم حضور</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-sm font-bold mb-1">سانس 01:15</label>
-                    <select id="v01" class="w-full border p-2 rounded-lg bg-slate-50">
-                        <option value="">تغییر نده</option><option value="حضور">حضور</option><option value="عدم حضور">عدم حضور</option>
-                    </select>
+            <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+                <h3 class="font-bold text-lg mb-4 pb-2 border-b border-slate-100 flex items-center gap-2">
+                    <span class="bg-amber-100 text-amber-600 px-2 py-1 rounded text-sm">۲</span> ثبت مساعده روزانه (اختیاری)
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="advance-grid">
+                    <!-- با جاوا اسکریپت پر می‌شود -->
                 </div>
             </div>
 
-            <div class="grid grid-cols-2 gap-4 border-t pt-4">
-                <div>
-                    <label class="block text-sm font-bold mb-1">مبلغ مساعده ۱ (تومان)</label>
-                    <input type="number" id="m1" class="w-full border p-2 rounded-lg" placeholder="۰">
+            <div class="flex items-center justify-between bg-slate-50 p-4 rounded-xl border border-slate-200">
+                <div class="flex items-center gap-3">
+                    <button onclick="submitData()" class="bg-slate-800 hover:bg-slate-900 text-white px-6 py-2.5 rounded-lg font-bold shadow-md transition">ثبت نهایی در دیتابیس</button>
+                    <div id="loaderSubmit" class="loader"></div>
                 </div>
-                <div>
-                    <label class="block text-sm font-bold mb-1">دلیل مساعده ۱</label>
-                    <input type="text" id="d1" class="w-full border p-2 rounded-lg" placeholder="...">
-                </div>
-                <div>
-                    <label class="block text-sm font-bold mb-1">مبلغ مساعده ۲ (تومان)</label>
-                    <input type="number" id="m2" class="w-full border p-2 rounded-lg" placeholder="۰">
-                </div>
-                <div>
-                    <label class="block text-sm font-bold mb-1">دلیل مساعده ۲</label>
-                    <input type="text" id="d2" class="w-full border p-2 rounded-lg" placeholder="...">
-                </div>
-            </div>
-
-            <div class="flex items-center gap-4 border-t pt-4">
-                <button onclick="submitData()" class="bg-amber-500 hover:bg-amber-600 text-white px-6 py-2 rounded-lg font-bold">ثبت در گوگل شیت</button>
-                <div id="loaderSubmit" class="loader"></div>
                 <p id="msgSubmit" class="text-sm font-bold text-emerald-600"></p>
             </div>
         </div>
 
-        <!-- بخش گزارش‌گیری -->
-        <div class="bg-slate-900 text-white p-6 rounded-2xl shadow-sm space-y-4">
-            <div class="flex justify-between items-center">
-                <h2 class="text-xl font-bold">گزارش‌گیری ماهانه</h2>
-                <div class="flex items-center gap-2">
-                    <div id="loaderReport" class="loader" style="border-top-color: white;"></div>
-                    <button onclick="getReport()" class="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-lg font-bold">دریافت گزارش</button>
-                </div>
+        <!-- تب گزارش‌گیری -->
+        <div id="tab-report" class="hidden space-y-4">
+            <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex justify-between items-center">
+                <h2 class="text-lg font-bold text-slate-700">دریافت کارنامه ماهانه شخص انتخاب شده</h2>
+                <button onclick="getReport()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2 rounded-lg font-bold shadow-md transition flex items-center gap-2">
+                    ایجاد گزارش <div id="loaderReport" class="loader !border-t-white w-4 h-4"></div>
+                </button>
             </div>
             
-            <div id="reportBox" class="hidden bg-slate-800 p-4 rounded-xl space-y-4">
-                <div>
-                    <h3 class="text-amber-400 font-bold border-b border-slate-700 pb-1 mb-2">گزارش VIPها (جمع: <span id="rTotalVip">0</span> سانس)</h3>
-                    <ul id="rVipList" class="text-sm space-y-1 list-disc pl-5 rtl:pr-5 text-slate-300"></ul>
+            <div id="reportBox" class="hidden grid grid-cols-1 md:grid-cols-2 gap-4">
+                
+                <div class="bg-white p-5 rounded-xl shadow-sm border border-emerald-200 space-y-3">
+                    <h3 class="font-bold text-emerald-700 border-b border-emerald-100 pb-2">حضور سانس‌های روزانه (<span id="rTotalReg">0</span> سانس)</h3>
+                    <ul id="rRegList" class="text-sm space-y-1 list-disc pl-5 rtl:pr-5 text-slate-600 max-h-40 overflow-y-auto"></ul>
                 </div>
-                <div>
-                    <h3 class="text-amber-400 font-bold border-b border-slate-700 pb-1 mb-2">گزارش مساعده‌ها (جمع: <span id="rTotalAdv">0</span> تومان)</h3>
-                    <ul id="rAdvList" class="text-sm space-y-1 list-disc pl-5 rtl:pr-5 text-slate-300"></ul>
+                
+                <div class="bg-white p-5 rounded-xl shadow-sm border border-indigo-200 space-y-3">
+                    <h3 class="font-bold text-indigo-700 border-b border-indigo-100 pb-2">حضور VIPهای شبانه (<span id="rTotalNight">0</span> سانس)</h3>
+                    <ul id="rNightList" class="text-sm space-y-1 list-disc pl-5 rtl:pr-5 text-slate-600 max-h-40 overflow-y-auto"></ul>
+                </div>
+
+                <div class="bg-white p-5 rounded-xl shadow-sm border border-rose-200 space-y-3">
+                    <h3 class="font-bold text-rose-700 border-b border-rose-100 pb-2">لیست غیبت‌ها / عدم حضور</h3>
+                    <ul id="rAbsList" class="text-sm space-y-1 list-disc pl-5 rtl:pr-5 text-slate-600 max-h-40 overflow-y-auto"></ul>
+                </div>
+
+                <div class="bg-white p-5 rounded-xl shadow-sm border border-amber-200 space-y-3">
+                    <h3 class="font-bold text-amber-700 border-b border-amber-100 pb-2">جمع مساعده‌ها: <span id="rTotalAdv" class="text-lg">0</span> تومان</h3>
+                    <ul id="rAdvList" class="text-sm space-y-1 list-disc pl-5 rtl:pr-5 text-slate-600 max-h-40 overflow-y-auto"></ul>
                 </div>
             </div>
         </div>
+
     </div>
 
     <script>
-        // بارگذاری لیست کارمندان هنگام لود صفحه
-        window.onload = loadEmployees;
+        const sessionsList = ['10:00', '12:00', '14:00', '16:15', '18:30', '20:45', '23:00', '01:15'];
+        
+        window.onload = () => {
+            initForms();
+            loadEmployees();
+        };
+
+        function initForms() {
+            let sessionHtml = '';
+            sessionsList.forEach(s => {
+                sessionHtml += `
+                    <div class="border border-slate-100 p-2 rounded-lg bg-slate-50">
+                        <label class="block text-xs font-bold mb-1 text-slate-600">سانس ${s}</label>
+                        <select id="s_${s}" class="w-full border-none p-1 text-sm bg-transparent focus:outline-none">
+                            <option value="">تغییر نده</option>
+                            <option value="حضور">حضور</option>
+                            <option value="عدم حضور">عدم حضور</option>
+                            <option value="عدم وجود سانس">عدم وجود سانس</option>
+                        </select>
+                    </div>`;
+            });
+            document.getElementById('session-grid').innerHTML = sessionHtml;
+
+            let advHtml = '';
+            for(let i=1; i<=3; i++) {
+                advHtml += `
+                    <div class="bg-slate-50 p-3 rounded-lg border border-slate-100 space-y-2">
+                        <label class="block text-sm font-bold text-slate-700">مساعده ${i}</label>
+                        <input type="number" id="m${i}" class="w-full border border-slate-200 p-1.5 rounded text-sm outline-none focus:border-amber-500" placeholder="مبلغ (تومان)">
+                        <input type="text" id="d${i}" class="w-full border border-slate-200 p-1.5 rounded text-sm outline-none focus:border-amber-500" placeholder="دلیل">
+                    </div>`;
+            }
+            document.getElementById('advance-grid').innerHTML = advHtml;
+        }
+
+        function switchTab(tab) {
+            document.getElementById('tab-entry').style.display = tab === 'entry' ? 'block' : 'none';
+            document.getElementById('tab-report').style.display = tab === 'report' ? 'block' : 'none';
+            
+            document.getElementById('btn-entry').classList.toggle('active', tab === 'entry');
+            document.getElementById('btn-report').classList.toggle('active', tab === 'report');
+        }
 
         function loadEmployees() {
             const month = document.getElementById('month').value;
+            document.getElementById('loaderMain').style.display = 'block';
+            
             fetch(`${SCRIPT_URL}?action=getEmployees&month=${month}`)
                 .then(res => res.json())
                 .then(data => {
+                    document.getElementById('loaderMain').style.display = 'none';
                     const select = document.getElementById('employee');
                     select.innerHTML = '';
                     if(data.employees && data.employees.length > 0) {
@@ -133,13 +188,14 @@
                     }
                 })
                 .catch(err => {
+                    document.getElementById('loaderMain').style.display = 'none';
                     document.getElementById('employee').innerHTML = '<option>خطا در اتصال</option>';
                 });
         }
 
         function submitData() {
             const day = document.getElementById('day').value;
-            if(!day) return alert("لطفاً روز را وارد کنید");
+            if(!day) return alert("لطفاً تاریخ (روز) را وارد کنید!");
             
             document.getElementById('loaderSubmit').style.display = 'block';
             document.getElementById('msgSubmit').innerText = '';
@@ -148,33 +204,42 @@
                 month: document.getElementById('month').value,
                 date: day + ' ' + document.getElementById('month').value,
                 employee: document.getElementById('employee').value,
-                v23: document.getElementById('v23').value,
-                v01: document.getElementById('v01').value,
-                m1: document.getElementById('m1').value,
-                d1: document.getElementById('d1').value,
-                m2: document.getElementById('m2').value,
-                d2: document.getElementById('d2').value
+                sessions: {},
+                advances: {}
             };
+
+            sessionsList.forEach(s => {
+                payload.sessions[s] = document.getElementById(`s_${s}`).value;
+            });
+            
+            for(let i=1; i<=3; i++) {
+                payload.advances[i] = {
+                    amount: document.getElementById(`m${i}`).value,
+                    reason: document.getElementById(`d${i}`).value
+                };
+            }
 
             fetch(SCRIPT_URL, {
                 method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                 body: JSON.stringify(payload)
             }).then(res => res.json()).then(res => {
                 document.getElementById('loaderSubmit').style.display = 'none';
                 if(res.success) {
-                    document.getElementById('msgSubmit').innerText = "اطلاعات با موفقیت ثبت شد!";
-                    // پاک کردن فرم پس از ثبت
+                    document.getElementById('msgSubmit').innerText = "با موفقیت ثبت شد!";
                     document.getElementById('day').value = '';
-                    document.getElementById('v23').value = ''; document.getElementById('v01').value = '';
-                    document.getElementById('m1').value = ''; document.getElementById('d1').value = '';
-                    document.getElementById('m2').value = ''; document.getElementById('d2').value = '';
+                    sessionsList.forEach(s => document.getElementById(`s_${s}`).value = '');
+                    for(let i=1; i<=3; i++) {
+                        document.getElementById(`m${i}`).value = '';
+                        document.getElementById(`d${i}`).value = '';
+                    }
                     setTimeout(()=> document.getElementById('msgSubmit').innerText = '', 3000);
                 } else {
                     alert("خطا در ثبت: " + res.error);
                 }
             }).catch(err => {
                 document.getElementById('loaderSubmit').style.display = 'none';
-                alert("ارتباط برقرار نشد. لطفاً اینترنت را بررسی کنید.");
+                alert("ارتباط برقرار نشد.");
             });
         }
 
@@ -189,32 +254,24 @@
                     document.getElementById('loaderReport').style.display = 'none';
                     document.getElementById('reportBox').classList.remove('hidden');
                     
-                    document.getElementById('rTotalVip').innerText = data.totalVips || 0;
+                    document.getElementById('rTotalReg').innerText = data.totalRegular || 0;
+                    document.getElementById('rTotalNight').innerText = data.totalNight || 0;
                     document.getElementById('rTotalAdv').innerText = (data.totalAdvance || 0).toLocaleString();
 
-                    let vipHtml = '';
-                    if(data.vips && data.vips.length > 0) {
-                        data.vips.forEach(v => {
-                            let text = v.date + " : ";
-                            if(v.v23) text += "سانس ۲۳:۰۰ ";
-                            if(v.v01) text += (v.v23 ? "و " : "") + "سانس ۰۱:۱۵";
-                            vipHtml += `<li>${text}</li>`;
-                        });
-                    } else {
-                        vipHtml = '<li>موردی ثبت نشده است</li>';
-                    }
-                    document.getElementById('rVipList').innerHTML = vipHtml;
+                    const renderList = (arr, elId, formatFn) => {
+                        let html = '';
+                        if(arr && arr.length > 0) {
+                            arr.forEach(item => html += `<li>${formatFn(item)}</li>`);
+                        } else {
+                            html = '<li class="text-slate-400">موردی ثبت نشده است.</li>';
+                        }
+                        document.getElementById(elId).innerHTML = html;
+                    };
 
-                    let advHtml = '';
-                    if(data.advances && data.advances.length > 0) {
-                        data.advances.forEach(a => {
-                            if(a.m1 > 0) advHtml += `<li>${a.date} : مبلغ ${a.m1.toLocaleString()} تومان (${a.d1})</li>`;
-                            if(a.m2 > 0) advHtml += `<li>${a.date} : مبلغ ${a.m2.toLocaleString()} تومان (${a.d2})</li>`;
-                        });
-                    } else {
-                        advHtml = '<li>موردی ثبت نشده است</li>';
-                    }
-                    document.getElementById('rAdvList').innerHTML = advHtml;
+                    renderList(data.regularVip, 'rRegList', i => `<b class="text-slate-800">${i.date}</b> : سانس ${i.session}`);
+                    renderList(data.nightVip, 'rNightList', i => `<b class="text-slate-800">${i.date}</b> : سانس <span class="bg-indigo-100 text-indigo-700 px-1 rounded">${i.session}</span>`);
+                    renderList(data.absences, 'rAbsList', i => `<b class="text-rose-700">${i.date}</b> : سانس ${i.session}`);
+                    renderList(data.advances, 'rAdvList', i => `<b class="text-slate-800">${i.date}</b> : ${i.amount.toLocaleString()} تومان <span class="text-xs text-slate-400">(${i.reason})</span>`);
                 })
                 .catch(err => {
                     document.getElementById('loaderReport').style.display = 'none';
